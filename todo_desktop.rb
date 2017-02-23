@@ -1,6 +1,6 @@
 ## Global methods
 def clear_screen
-  system('cls')
+  system('reset')
 end
 
 def prompt(prompt_text)
@@ -29,9 +29,9 @@ class Task
     puts "Your list contains following tasks:"
     @@list_of_tasks.each_with_index do |task, index|
       if task.done?
-        puts "#{index+1}. #{task.name} | done"
+        puts "done     | #{index+1}. #{task.name}"
       else
-        puts "#{index+1}. #{task.name} | not done"
+        puts "not done | #{index+1}. #{task.name}"
       end
     end
   end
@@ -84,12 +84,12 @@ clear_screen
 Task.create_dummy_data
 
 while true
+  Task.index
   puts '
     Menu:
     1. Add task
-    2. Display all tasks
+    2. Delete task
     3. Change task status
-    4. Delete task
   '
   print '> '
   choice = gets.chomp.to_i
@@ -98,11 +98,11 @@ while true
   when 1
     Task.add_task
   when 2
-    Task.index
+    Task.delete_task
   when 3
     Task.change_status
   when 4
-    Task.delete_task
+
   when 0
     clear_screen
     puts "Goodbye! Thank you for choosing Platformatec."
