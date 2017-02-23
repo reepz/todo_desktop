@@ -1,7 +1,14 @@
+## Global methods
 def clear_screen
   system('cls')
 end
-################################################################################
+
+def prompt(prompt_text)
+  puts prompt_text
+  choice = gets.chomp.to_i
+end
+
+## Classes
 class Task
   attr_accessor :name, :status
   @@list_of_tasks = []
@@ -11,13 +18,15 @@ class Task
     @status = status
   end
 
+  ## Instance methods:
   def done?
     @status == true
   end
 
-  def self.delete_task
+  ## Class methods:
+  def self.index
     clear_screen
-    puts "Which task do you want to delete?"
+    puts "Your list contains following tasks:"
     @@list_of_tasks.each_with_index do |task, index|
       if task.done?
         puts "#{index+1}. #{task.name} | done"
@@ -25,23 +34,19 @@ class Task
         puts "#{index+1}. #{task.name} | not done"
       end
     end
-    choice = gets.chomp.to_i
-    @@list_of_tasks.delete_at(choice-1)
+  end
+
+  def self.delete_task
+    clear_screen
+    Task.index
+    @@list_of_tasks.delete_at(prompt("Which task do you want to delete?")-1)
     clear_screen
   end
 
   def self.change_status
     clear_screen
-    puts 'Which task you want to change:'
-    @@list_of_tasks.each_with_index do |task, index|
-      if task.done?
-        puts "#{index+1}. #{task.name} | done"
-      else
-        puts "#{index+1}. #{task.name} | not done"
-      end
-    end
-    choice = gets.chomp.to_i
-    task = @@list_of_tasks[choice-1]
+    Task.index
+    task = @@list_of_tasks[prompt("Which task do you want to change?")-1]
     if task.done?
       task.status = false
     else
@@ -52,39 +57,29 @@ class Task
 
   def self.add_task
     clear_screen
-    print 'Task name: '
-    name = gets.chomp
-    task = Task.new(name)
+    task = Task.new(prompt("Task name:").to_s)
     @@list_of_tasks << task
     puts 'Task has been created.'
   end
 
-  def self.index
-    clear_screen
-    puts "You list contains following tasks:"
-    @@list_of_tasks.each do |task|
-      if task.done?
-        puts "#{task.name} | done"
-      else
-        puts "#{task.name} | not done"
-      end
+  ## Development features
+  def self.create_dummy_data
+    data = ['Take the trash out',
+            'Replace leds in the kitchen',
+            'Clean up my room',
+            'Love Karolina',
+            'Write g00d code',
+            'COFFEE!']
+
+    data.each do |d|
+      task = Task.new(d)
+      @@list_of_tasks << task
     end
   end
-
-  def self.create_dummy_data
-    task = Task.new('Evolve')
-    @@list_of_tasks << task
-
-    task = Task.new('Conquer')
-    @@list_of_tasks << task
-
-    task = Task.new('Breed')
-    @@list_of_tasks << task
-  end
-
 end
 
 ################################################################################
+## Program execution:
 clear_screen
 Task.create_dummy_data
 
@@ -110,7 +105,7 @@ while true
     Task.delete_task
   when 0
     clear_screen
-    print 'Thanks for choosing Platformtec.'
+    puts "Goodbye! Thank you for choosing Platformatec."
     exit
   else
     #
