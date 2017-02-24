@@ -19,10 +19,62 @@ def display_menu
   '
 end
 
+## #### for development only
+def create_dummy_data
+  @mylist = List.new
+  data = ['Take the trash out',
+          'Replace leds in the kitchen',
+          'Clean up my room',
+          'Love Karolina',
+          'Write g00d code',
+          'COFFEE!']
+
+  data.each do |d|
+    task = Task.new(d)
+    @mylist.add_task(task)
+  end
+end
+
 ## Classes
+
+# List class
+class List
+  attr_reader :all_tasks
+
+  def initialize
+    @all_tasks = []
+  end
+
+# Instance methods:
+  def add_task(task)
+    all_tasks << task
+  end
+
+  def display_all_tasks
+    clear_screen
+    puts "Your list contains the following tasks:
+    "
+    all_tasks.each_with_index do |task, index|
+      if task.done?
+        puts "done     | #{index+1}. #{task.name}"
+      else
+        puts "not done | #{index+1}. #{task.name}"
+      end
+    end
+  end
+  puts "/n"
+
+  def delete_task
+    display_all_tasks
+    puts "Which task do you want to delete?"
+    choice = gets.chomp
+    all_tasks.delete_at(choice.to_i - 1)
+  end
+end
+
+# Task class
 class Task
   attr_accessor :name, :status
-  @@list_of_tasks = []
 
   def initialize(name, status = 'not done')
     @name = name
@@ -34,95 +86,56 @@ class Task
     @status == 'done'
   end
 
-  ## Class methods:
-  def self.index(order = nil)
-    clear_screen
-    puts "Your list contains following tasks:
-    "
-    if order == nil
-      @@list_of_tasks.each_with_index do |task, index|
-        if task.done?
-          puts "done     | #{index+1}. #{task.name}"
-        else
-          puts "not done | #{index+1}. #{task.name}"
-        end
-      end
+  def change_status
+    if status == 'done'
+      @status = 'not done'
+    else
+      @status = 'done'
     end
-    puts "\n"
   end
 
-  def self.delete_task
-    clear_screen
-    Task.index
-    @@list_of_tasks.delete_at(prompt("Which task do you want to delete?").to_i-1)
-    clear_screen
-  end
-
-  def self.change_status
-    clear_screen
-    Task.index
-    task = @@list_of_tasks[prompt("Which task do you want to change?").to_i-1]
-    task.done? ? task.status = 'not' : task.status = 'done'
-    clear_screen
-  end
-
-  def self.add_task
-    clear_screen
-    Task.index
-    task = Task.new(prompt("Please provide name of new task:"))
-    @@list_of_tasks << task
-  end
-
-  def self.change_name
-    clear_screen
-    Task.index
-    choice = prompt("Which task do you want to rename?")
-    task = @@list_of_tasks[choice.to_i-1]
-    task.name = prompt("Please provide new name:")
-  end
-
-  ## for development only
-  def self.create_dummy_data
-    data = ['Take the trash out',
-            'Replace leds in the kitchen',
-            'Clean up my room',
-            'Love Karolina',
-            'Write g00d code',
-            'COFFEE!']
-
-    data.each do |d|
-      task = Task.new(d)
-      @@list_of_tasks << task
-    end
+  def change_name(name)
+    @name = name
   end
 end
 
 ################################################################################
 ## Program execution:
+
 clear_screen
-Task.create_dummy_data
+create_dummy_data
 
 while true
-  Task.index
+
+  @mylist.display_all_tasks
   display_menu
+
   choice = prompt("What do you want to do?").to_i
 
   case choice
   when 1
-    Task.add_task
+    @mylist.add_task(Task.new(prompt("Please provide name of the new task")))
   when 2
-    Task.delete_task
+    @mylist.delete_task
   when 3
-    Task.change_status
+    @mylist.display_all_tasks
+    puts "Which task name do you want to change?"
+    choice = gets.chomp
+    task = @mylist.all_tasks[choice.to_i - 1]
+    task.change_status
   when 4
-    Task.change_name
+    @mylist.display_all_tasks
+    puts "Which task name do you want to change?"
+    choice = gets.chomp
+    task = @mylist.all_tasks[choice.to_i - 1]
+    puts "Please provide new name"
+    new_name = gets.chomp
+    task.name = new_name
   when 0
     clear_screen
     puts "Goodbye! Thank you for choosing Platformatec."
     exit
   else
-    # runtime
-  #   #
-  # clear_screen
+    #
   end
 end
