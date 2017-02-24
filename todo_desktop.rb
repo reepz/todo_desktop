@@ -27,7 +27,7 @@ def create_dummy_data
           'Clean up my room',
           'Love Karolina',
           'Write g00d code',
-          'COFFEE!']
+          'COFFEEeee!']
 
   data.each do |d|
     task = Task.new(d)
