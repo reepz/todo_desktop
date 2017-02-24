@@ -5,7 +5,7 @@ end
 
 def prompt(prompt_text)
   puts prompt_text
-  choice = gets.chomp.to_i
+  choice = gets.chomp
 end
 
 ## Classes
@@ -39,14 +39,14 @@ class Task
   def self.delete_task
     clear_screen
     Task.index
-    @@list_of_tasks.delete_at(prompt("Which task do you want to delete?")-1)
+    @@list_of_tasks.delete_at(prompt("Which task do you want to delete?").to_i-1)
     clear_screen
   end
 
   def self.change_status
     clear_screen
     Task.index
-    task = @@list_of_tasks[prompt("Which task do you want to change?")-1]
+    task = @@list_of_tasks[prompt("Which task do you want to change?").to_i-1]
     if task.done?
       task.status = false
     else
@@ -57,7 +57,7 @@ class Task
 
   def self.add_task
     clear_screen
-    task = Task.new(prompt("Task name:").to_s)
+    task = Task.new(prompt("Task name:"))
     @@list_of_tasks << task
     puts 'Task has been created.'
   end
@@ -108,7 +108,8 @@ while true
     puts "Goodbye! Thank you for choosing Platformatec."
     exit
   else
-    #
-  clear_screen
+    runtime
+  #   #
+  # clear_screen
   end
 end
