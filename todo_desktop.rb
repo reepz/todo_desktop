@@ -1,11 +1,22 @@
 ## Global methods
 def clear_screen
-  system('reset')
+  system('cls')
 end
 
-def prompt(prompt_text)
+def prompt(prompt_text = nil)
   puts prompt_text
+  print '> '
   choice = gets.chomp
+end
+
+def display_menu
+  puts '
+    Menu:
+    1. Add task
+    2. Delete task
+    3. Change task status
+    4. Change task name
+  '
 end
 
 ## Classes
@@ -13,27 +24,31 @@ class Task
   attr_accessor :name, :status
   @@list_of_tasks = []
 
-  def initialize(name, status = false)
+  def initialize(name, status = 'not done')
     @name = name
     @status = status
   end
 
   ## Instance methods:
   def done?
-    @status == true
+    @status == 'done'
   end
 
   ## Class methods:
-  def self.index
+  def self.index(order = nil)
     clear_screen
-    puts "Your list contains following tasks:"
-    @@list_of_tasks.each_with_index do |task, index|
-      if task.done?
-        puts "done     | #{index+1}. #{task.name}"
-      else
-        puts "not done | #{index+1}. #{task.name}"
+    puts "Your list contains following tasks:
+    "
+    if order == nil
+      @@list_of_tasks.each_with_index do |task, index|
+        if task.done?
+          puts "done     | #{index+1}. #{task.name}"
+        else
+          puts "not done | #{index+1}. #{task.name}"
+        end
       end
     end
+    puts "\n"
   end
 
   def self.delete_task
@@ -47,22 +62,26 @@ class Task
     clear_screen
     Task.index
     task = @@list_of_tasks[prompt("Which task do you want to change?").to_i-1]
-    if task.done?
-      task.status = false
-    else
-      task.status = true
-    end
+    task.done? ? task.status = 'not' : task.status = 'done'
     clear_screen
   end
 
   def self.add_task
     clear_screen
-    task = Task.new(prompt("Task name:"))
+    Task.index
+    task = Task.new(prompt("Please provide name of new task:"))
     @@list_of_tasks << task
-    puts 'Task has been created.'
   end
 
-  ## Development features
+  def self.change_name
+    clear_screen
+    Task.index
+    choice = prompt("Which task do you want to rename?")
+    task = @@list_of_tasks[choice.to_i-1]
+    task.name = prompt("Please provide new name:")
+  end
+
+  ## for development only
   def self.create_dummy_data
     data = ['Take the trash out',
             'Replace leds in the kitchen',
@@ -85,14 +104,8 @@ Task.create_dummy_data
 
 while true
   Task.index
-  puts '
-    Menu:
-    1. Add task
-    2. Delete task
-    3. Change task status
-  '
-  print '> '
-  choice = gets.chomp.to_i
+  display_menu
+  choice = prompt("What do you want to do?").to_i
 
   case choice
   when 1
@@ -102,13 +115,13 @@ while true
   when 3
     Task.change_status
   when 4
-
+    Task.change_name
   when 0
     clear_screen
     puts "Goodbye! Thank you for choosing Platformatec."
     exit
   else
-    runtime
+    # runtime
   #   #
   # clear_screen
   end
